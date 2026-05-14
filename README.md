@@ -1,1 +1,1 @@
-# Transit-Inequality-Mapper-TDC-
+# Transit Inequality Mapper (TDC)
