@@ -1,3 +1,5 @@
 data/stop_times.txt
 data/*.txt
 data.zip
+.DS_Store
+**/.DS_Store
