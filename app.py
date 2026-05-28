@@ -31,7 +31,7 @@ _DATA = os.path.join(_HERE, "data")
 zip_path = os.path.join(_HERE, "data.zip")
 
 with zipfile.ZipFile(zip_path, "r") as zip_ref:
-    zip_ref.extractall(_DATA)
+    zip_ref.extractall(_HERE)
 
 CENSUS_PATH  = os.path.join(_DATA, "census_data.xlsx")
 GEOJSON_PATH = os.path.join(_DATA, "Neighbourhoods.geojson")
