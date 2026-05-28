@@ -27,9 +27,8 @@ st.set_page_config(
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA = os.path.join(_HERE, "data")
 
-# unzip data.zip into data/
+# Unzip bundled data on startup
 zip_path = os.path.join(_HERE, "data.zip")
-
 with zipfile.ZipFile(zip_path, "r") as zip_ref:
     zip_ref.extractall(_HERE)
 
@@ -38,9 +37,9 @@ GEOJSON_PATH = os.path.join(_DATA, "Neighbourhoods.geojson")
 GTFS_DIR     = _DATA
 SUBWAY_ZIP   = os.path.join(_DATA, "ttc-subway-shapefile-wgs84.zip")
 
-
 # ---------------------------------------------------------------------------
 # CSS — light theme, TTC-inspired colours
+# Fonts: "Helvetica Neue" replaces vendor-prefixed system font stacks
 # ---------------------------------------------------------------------------
 
 st.markdown("""
@@ -56,7 +55,7 @@ html, body,
 [class*="css"] {
     background-color: #f5f5f7 !important;
     color: #1d1d1f !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 14px;
 }
 
@@ -303,7 +302,7 @@ div[class*="dropdown"] *, div[class*="Dropdown"] * { color: #1d1d1f !important; 
 div[data-testid="stVegaLiteChart"] > div { background-color: #ffffff !important; color: #1d1d1f !important; }
 .js-plotly-plot, .plotly, svg.main-svg   { background-color: #ffffff !important; }
 
-/* Expander — white, consistent on all pages */
+/* Expander */
 [data-testid="stExpander"] {
     border: 1px solid #e0e0e5 !important;
     border-radius: 8px !important;
@@ -354,7 +353,7 @@ div[data-testid="stVegaLiteChart"] > div { background-color: #ffffff !important;
     color: #C8102E !important;
 }
 
-/* File uploader — white on all pages */
+/* File uploader */
 [data-testid="stFileUploader"] { background: transparent !important; }
 [data-testid="stFileUploader"] label { font-size: 13px !important; color: #1d1d1f !important; }
 [data-testid="stFileUploaderDropzone"] {
@@ -368,7 +367,7 @@ div[data-testid="stVegaLiteChart"] > div { background-color: #ffffff !important;
 [data-testid="stFileUploaderDropzone"] * { color: #1d1d1f !important; background: transparent !important; }
 [data-testid="stFileUploaderDropzone"] svg { fill: #6e6e73 !important; }
 
-/* Alert/success/info boxes — white background, dark text */
+/* Alert boxes */
 [data-testid="stAlert"] {
     border-radius: 8px !important;
     background: #ffffff !important;
@@ -377,7 +376,6 @@ div[data-testid="stVegaLiteChart"] > div { background-color: #ffffff !important;
 }
 [data-testid="stAlert"] * { color: #1d1d1f !important; }
 [data-testid="stAlert"] p { color: #1d1d1f !important; }
-/* Success alert specifically */
 [data-testid="stAlert"][data-baseweb="notification"] { background: #ffffff !important; }
 div[class*="stAlert"] p { color: #1d1d1f !important; }
 
@@ -385,21 +383,84 @@ h2, h3 { color: #1d1d1f !important; font-weight: 600; }
 .stSelectbox > label, .stCheckbox > label { font-size: 13px !important; }
 hr { border-color: #e0e0e5; }
 
-/* FIX 2: Slider styling — neutral white/grey, no red */
-[data-testid="stSlider"] { background: transparent !important; }
-[data-testid="stSlider"] > div { background: transparent !important; }
-[data-testid="stSlider"] label { font-size: 13px !important; color: #1d1d1f !important; }
-[data-testid="stSlider"] [data-baseweb="slider"] { background: transparent !important; }
-[data-testid="stSlider"] [data-baseweb="slider"] > div { background: #d1d1d6 !important; }
-[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] {
-    background: #ffffff !important;
+/* Slider Wrapper */
+[data-testid="stSlider"],
+[data-testid="stSlider"] > div,
+[data-baseweb="slider"],
+div:has(> [data-baseweb="slider"]) {
+    background: #f5f5f7 !important;
+}
+
+/* Slider Label */
+[data-testid="stSlider"] label {
+    font-size: 13px !important;
+    color: #1d1d1f !important;
+    background: transparent !important;
+}
+
+/* Track Container */
+[data-baseweb="slider"] > div {
+    background: transparent !important;
+}
+
+/* Track (inactive + active) */
+[data-baseweb="slider"] > div > div:first-child,
+[data-baseweb="slider"] > div > div:nth-child(2) {
+    background: #d1d1d6 !important;
+}
+
+/* Slider Thumb */
+[data-testid="stSlider"] [role="slider"] {
+    background: #f5f5f7 !important;
     border: 2px solid #6e6e73 !important;
     box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
 }
-[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"]:hover {
+
+[data-testid="stSlider"] [role="slider"]:hover {
     border-color: #1d1d1f !important;
 }
-div[data-testid="stSlider"] > label + div { background: transparent !important; }
+
+/* Tick Labels (0.00 / 2.00) */
+[data-testid="stTickBarMin"],
+[data-testid="stTickBarMax"] {
+    display: none !important;
+}
+
+/* Folium Draw toolbar */
+.leaflet-draw-toolbar a.leaflet-draw-export {
+    margin-top: 40px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+[data-testid="stDownloadButton"] > button {
+    background: #1d1d1f !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+[data-testid="stDownloadButton"] > button:hover {
+    background: #C8102E !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+/* Choropleth legend: push down so it clears the +/- zoom control (top-left, ~90px tall) */
+.leaflet-control-container .leaflet-bottom.leaflet-left {
+    bottom: 0;
+    left: 0;
+}
+.leaflet-control-container .leaflet-top.leaflet-left {
+    top: 0;
+    left: 0;
+}
+/* Legend sits bottom-right by default in folium; ensure it doesn't stack over zoom */
+.info.legend {
+    margin-bottom: 8px !important;
+    margin-left: 8px !important;
+}
 
 /* Impact indicator cards */
 .impact-card {
@@ -418,7 +479,7 @@ div[data-testid="stSlider"] > label + div { background: transparent !important; 
 
 
 # ---------------------------------------------------------------------------
-# DataFrame rendering
+# DataFrame rendering helper
 # ---------------------------------------------------------------------------
 
 def styled_df(df, index=True):
@@ -435,7 +496,7 @@ def styled_df(df, index=True):
     <style>
     .lttable {{
         width: 100%; border-collapse: collapse;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 13px; background: #ffffff;
         border: 1px solid #e0e0e5; border-radius: 8px; overflow: hidden;
     }}
@@ -467,6 +528,7 @@ def styled_df(df, index=True):
 @st.cache_data(show_spinner=False)
 def load_census(path):
     df = pd.read_excel(path, engine="openpyxl")
+    # Normalise neighbourhood name variants to match GeoJSON
     df = df.rename(columns={
         "O`Connor Parkview": "O'Connor-Parkview",
         "Danforth-East York": "Danforth East York",
@@ -503,6 +565,7 @@ def load_geojson(path):
 def load_gtfs(gtfs_dir):
     def rd(fname, **kw):
         return pd.read_csv(os.path.join(gtfs_dir, fname), **kw)
+
     routes     = rd("routes.txt")
     trips      = rd("trips.txt", low_memory=False)
     stops      = rd("stops.txt")
@@ -510,14 +573,17 @@ def load_gtfs(gtfs_dir):
     shapes_raw["shape_pt_lat"]      = shapes_raw["shape_pt_lat"].astype(float)
     shapes_raw["shape_pt_lon"]      = shapes_raw["shape_pt_lon"].astype(float)
     shapes_raw["shape_pt_sequence"] = shapes_raw["shape_pt_sequence"].astype(int)
+
     SUBWAY_IDS   = [1, 2, 4]
     subway_trips = trips[trips["route_id"].isin(SUBWAY_IDS)].copy()
     subway_trips["trip_id"] = subway_trips["trip_id"].astype(str)
+
     def longest_shape(route_id):
         ids = subway_trips[subway_trips["route_id"] == route_id]["shape_id"].dropna().unique()
         if len(ids) == 0:
             return None
         return max(ids, key=lambda sid: len(shapes_raw[shapes_raw["shape_id"] == sid]))
+
     route_polylines = {}
     for rid in SUBWAY_IDS:
         sid = longest_shape(rid)
@@ -525,12 +591,15 @@ def load_gtfs(gtfs_dir):
             continue
         pts = shapes_raw[shapes_raw["shape_id"] == sid].sort_values("shape_pt_sequence")
         route_polylines[rid] = list(zip(pts["shape_pt_lat"], pts["shape_pt_lon"]))
+
     subway_trip_ids = set(subway_trips["trip_id"])
+
     def clean_name(raw):
         n = re.sub(r"\s*-\s*(Northbound|Southbound|Eastbound|Westbound).*", "", raw)
         n = re.sub(r"\s*Platform.*",  "", n)
         n = re.sub(r"\s*-\s*Subway.*", "", n)
         return n.strip()
+
     stops["stop_id"] = stops["stop_id"].astype(str)
     chunks = []
     for chunk in pd.read_csv(
@@ -542,6 +611,7 @@ def load_gtfs(gtfs_dir):
         filtered = chunk[chunk["trip_id"].isin(subway_trip_ids)]
         if len(filtered):
             chunks.append(filtered)
+
     stations = pd.DataFrame(columns=["route_id", "station_name", "stop_lat", "stop_lon"])
     if chunks:
         sst = pd.concat(chunks, ignore_index=True).drop_duplicates()
@@ -555,8 +625,10 @@ def load_gtfs(gtfs_dir):
         sst["stop_lat"]     = pd.to_numeric(sst["stop_lat"], errors="coerce")
         sst["stop_lon"]     = pd.to_numeric(sst["stop_lon"], errors="coerce")
         stations = sst.drop_duplicates(subset=["route_id", "station_name"]).reset_index(drop=True)
+
     bus_routes       = routes[routes["route_type"] == 3][["route_id", "route_short_name", "route_long_name"]].copy()
     streetcar_routes = routes[routes["route_type"] == 0][["route_id", "route_short_name", "route_long_name"]].copy()
+
     def get_polylines(route_subset):
         result = {}
         for _, row in route_subset.iterrows():
@@ -573,6 +645,7 @@ def load_gtfs(gtfs_dir):
                     "label":  f"{row['route_short_name']} · {row['route_long_name']}",
                 }
         return result
+
     bus_lines       = get_polylines(bus_routes)
     streetcar_lines = get_polylines(streetcar_routes)
     return route_polylines, stations, bus_lines, streetcar_lines, routes, trips, stops, shapes_raw
@@ -584,14 +657,15 @@ def load_gtfs(gtfs_dir):
 
 @st.cache_data(show_spinner=False)
 def compute_transit_access(_routes_hash, _trips_hash, _stops_hash, _shapes_hash, gtfs_dir, geojson_path):
-    routes     = pd.read_csv(os.path.join(gtfs_dir, "routes.txt"))
-    trips      = pd.read_csv(os.path.join(gtfs_dir, "trips.txt"), low_memory=False)
-    stops      = pd.read_csv(os.path.join(gtfs_dir, "stops.txt"))
+    routes = pd.read_csv(os.path.join(gtfs_dir, "routes.txt"))
+    trips  = pd.read_csv(os.path.join(gtfs_dir, "trips.txt"), low_memory=False)
+    stops  = pd.read_csv(os.path.join(gtfs_dir, "stops.txt"))
 
     express_route_ids   = set(routes[routes["route_short_name"].astype(str).str.match(r"^9\d{2}")]["route_id"])
     streetcar_route_ids = set(routes[routes["route_type"] == 0]["route_id"])
     bus_route_ids       = set(routes[routes["route_type"] == 3]["route_id"]) - express_route_ids
 
+    # Build stop→route mapping in chunks to handle large stop_times.txt
     all_trip_route = trips[["trip_id", "route_id"]].astype(str)
     stop_route_map = {}
     for chunk in pd.read_csv(
@@ -653,6 +727,7 @@ def compute_transit_access(_routes_hash, _trips_hash, _stops_hash, _shapes_hash,
         sst["stop_lon"] = pd.to_numeric(sst["stop_lon"], errors="coerce")
         stations_for_access = sst.drop_duplicates(subset=["route_id", "stop_id"]).dropna(subset=["stop_lat", "stop_lon"])
 
+    # Line 3 (Scarborough RT) closed 2023 — hardcoded coords
     line3 = pd.DataFrame([
         {"stop_lat": 43.73205, "stop_lon": -79.26473},
         {"stop_lat": 43.75090, "stop_lon": -79.27044},
@@ -754,6 +829,7 @@ def build_census_table(metrics_dict):
 
 
 def compute_need_score(census_df, factor_weights):
+    # Weighted average of normalised vulnerability indicators
     components = []
     for label, weight in factor_weights.items():
         if weight == 0:
@@ -845,7 +921,7 @@ EQUITY_METRICS = [
 
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Map helpers
 # ---------------------------------------------------------------------------
 
 def melt_metric_raw(df_metric):
@@ -929,8 +1005,8 @@ def vega_bar_chart(df, x_field, y_field, color, y_title, height=260):
             "background": "#ffffff",
             "view": {"stroke": "transparent", "fill": "#ffffff"},
             "axis": {
-                "labelFont": "-apple-system, sans-serif",
-                "titleFont": "-apple-system, sans-serif",
+                "labelFont": "Helvetica Neue, sans-serif",
+                "titleFont": "Helvetica Neue, sans-serif",
                 "labelColor": "#6e6e73", "titleColor": "#6e6e73",
                 "domainColor": "#d1d1d6", "tickColor": "#d1d1d6", "gridColor": "#f0f0f2",
             },
@@ -1184,7 +1260,7 @@ with tab1:
                 style_function=lambda _: {"fillColor": "transparent", "color": "transparent", "weight": 0, "fillOpacity": 0},
                 tooltip=folium.GeoJsonTooltip(
                     fields=tooltip_fields, aliases=tooltip_aliases, localize=True, sticky=True,
-                    style="background:#fff;color:#1d1d1f;font-family:-apple-system,sans-serif;font-size:13px;border:1px solid #e0e0e5;border-radius:6px;padding:8px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);",
+                    style="background:#fff;color:#1d1d1f;font-family:Helvetica Neue,sans-serif;font-size:13px;border:1px solid #e0e0e5;border-radius:6px;padding:8px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);",
                 ),
             ).add_to(m)
         if show_bus and bus_lines:
@@ -1287,14 +1363,14 @@ with tab3:
             unsafe_allow_html=True,
         )
 
-        # FIX 1: Numbered step rows instead of misleading + / = operators
         st.markdown("""
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
             <div style="background:#ffffff;border:1px solid #e0e0e5;border-radius:10px;padding:14px 20px;display:flex;align-items:flex-start;gap:14px">
                 <div style="width:26px;height:26px;border-radius:50%;background:#1d1d1f;color:#ffffff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
                 <div>
                     <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#6e6e73;margin-bottom:3px">Transit Access Score</div>
-                    <div style="font-size:13px;color:#1d1d1f;line-height:1.5">Counts stops and stations within walking distance of each neighbourhood, weighted by mode (bus, streetcar, subway) and normalized 0–100.</div>
+                    <div style="font-size:13px;color:#1d1d1f;line-height:1.5">Counts stops and stations within walking distance of each neighbourhood, weighted by mode (bus, express bus, streetcar, subway) and normalized 0–100.</div>
+                    <div style="font-size:13px;color:#1d1d1f;line-height:1.5">Formula: Transit Access Score = (bus + 1.5 × express + 1.5 × streetcar + 3 × subway) / area</div>
                 </div>
             </div>
             <div style="background:#ffffff;border:1px solid #e0e0e5;border-radius:10px;padding:14px 20px;display:flex;align-items:flex-start;gap:14px">
@@ -1316,8 +1392,6 @@ with tab3:
 
         col_ctrl, col_map = st.columns([1, 3], gap="large")
 
-        # FIX 3: map_layer_base default — resolved from session_state so the selectbox
-        # (rendered below the map) persists correctly across reruns
         map_layer_base = st.session_state.get("base_map_layer", "Equity Gap (Need − Access)")
 
         with col_ctrl:
@@ -1333,7 +1407,7 @@ with tab3:
                 default_val = 1.0 if label in NEED_FACTOR_DEFAULTS else 0.0
                 w = st.slider(
                     label, min_value=0.0, max_value=2.0, value=default_val, step=0.25,
-                    key=f"w_base_{label}",
+                    key=f"w_base_{label}", format="%.2f",
                 )
                 factor_weights[label] = w
 
@@ -1393,17 +1467,44 @@ with tab3:
                     fields=["AREA_NAME", "transit_access_norm", "need_score", "equity_gap"],
                     aliases=["Neighbourhood", "Transit Access Score (0-100)", "Need Score (0-100)", "Equity Gap"],
                     sticky=True,
-                    style="background:#fff;color:#1d1d1f;font-family:-apple-system,sans-serif;font-size:13px;border:1px solid #e0e0e5;border-radius:6px;padding:8px 12px;",
+                    style="background:#fff;color:#1d1d1f;font-family:Helvetica Neue,sans-serif;font-size:13px;border:1px solid #e0e0e5;border-radius:6px;padding:8px 12px;",
                 ),
             ).add_to(eq_map)
 
             if show_subway:
                 add_subway_to_map(eq_map, route_polylines, stations)
 
-            folium.LayerControl(collapsed=True).add_to(eq_map)
+            # Legend goes bottom-right to clear the top-left zoom/draw controls
+            folium.LayerControl(position="topright", collapsed=True).add_to(eq_map)
+
+            # Inject CSS to push legend to bottom right
+            eq_map.get_root().html.add_child(folium.Element("""
+            <style>
+            .info.legend {
+                position: absolute !important;
+                bottom: 20px !important;
+                right: 10px !important;
+                left: auto !important;
+                top: auto !important;
+
+                z-index: 9999;
+                max-height: 220px;
+                overflow-y: auto;
+
+                font-family: Helvetica Neue, sans-serif;
+                font-size: 12px;
+
+                background: rgba(255,255,255,0.95);
+                padding: 8px 10px;
+                border-radius: 6px;
+                box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+            }
+            </style>
+            """))
+
             st_folium(eq_map, width="100%", height=520, returned_objects=[])
 
-            # FIX 3: Map layer selector + legend moved below the map
+            # Map layer selector below the map to avoid covering it
             map_ctrl_row = st.columns([1, 2], gap="medium")
             with map_ctrl_row[0]:
                 st.markdown('<div class="ctrl-label" style="margin-top:10px">Map layer</div>', unsafe_allow_html=True)
@@ -1466,12 +1567,11 @@ with tab4:
 
     with left2:
         st.markdown("**How to Use**")
-        # FIX 4: subway_proposal.geojson uses <em> italic instead of <code> black/green
         st.markdown("""
         <div class="step-list">
             <div class="step-row"><span class="step-num">1</span><span>Select the <b>polyline tool</b> and click on the map to draw a proposed route. Double-click to finish.</span></div>
             <div class="step-row"><span class="step-num">2</span><span>Use the <b>marker tool</b> to place proposed station stops. Each marker = one new station.</span></div>
-            <div class="step-row"><span class="step-num">3</span><span>Use the <b>circle tool</b> to visualise ~500 m walking catchment zones.</span></div>
+            <div class="step-row"><span class="step-num">3</span><span>Use the <b>circle tool</b> to visualize ~500 m walking catchment zones.</span></div>
             <div class="step-row"><span class="step-num">4</span><span>Use the <b>measure tool</b> (top-right) to estimate route distances.</span></div>
             <div class="step-row"><span class="step-num">5</span><span>Click <b>Export</b> to download your proposal as <em>subway_proposal.geojson</em>. Upload this file in the <b>Simulation Comparison</b> tab to analyse the equity impact.</span></div>
         </div>
@@ -1516,10 +1616,10 @@ with tab4:
             sl2.add_to(sm)
         if show_subway:
             add_subway_to_map(sm, route_polylines, stations)
+
         plugins.Draw(
-            export=True,
-            filename="subway_proposal.geojson",
-            position="topleft",
+            export=False,
+            position="topright",
             draw_options={
                 "polyline":     {"shapeOptions": {"color": "#FF3B30", "weight": 4}},
                 "marker":       True,
@@ -1530,6 +1630,7 @@ with tab4:
             },
             edit_options={"edit": True, "remove": True},
         ).add_to(sm)
+
         plugins.MousePosition(position="bottomright", separator=" | ", prefix="").add_to(sm)
         plugins.MeasureControl(position="topright", primary_length_unit="kilometers").add_to(sm)
         folium.LayerControl(collapsed=True).add_to(sm)
@@ -1537,14 +1638,27 @@ with tab4:
         sm.get_root().html.add_child(folium.Element(
             '<div style="position:fixed;top:10px;left:50%;transform:translateX(-50%);'
             'background:rgba(20,20,20,0.82);color:white;border-radius:8px;'
-            'padding:8px 20px;font-family:Arial,sans-serif;font-size:12px;'
+            'padding:8px 20px;font-family:Helvetica Neue,Arial,sans-serif;font-size:12px;'
             'z-index:9999;pointer-events:none;white-space:nowrap">'
-            'Place <b>Markers</b> at each station &nbsp;·&nbsp; Draw a <b>Polyline</b> for the route &nbsp;·&nbsp;'
-            'Click <b style="color:#7ec8e3">Export</b> (top-left) when done'
+            'Place <b>Markers</b> at each station &nbsp;·&nbsp; Draw a <b>Polyline</b> for the route'
             '</div>'
         ))
 
-        st_folium(sm, width="100%", height=560, returned_objects=[])
+        draw_data = st_folium(sm, width="100%", height=560, returned_objects=["all_drawings"])
+
+        if draw_data and draw_data.get("all_drawings") and len(draw_data["all_drawings"]) > 0:
+            geojson_str = json.dumps({"type": "FeatureCollection", "features": draw_data["all_drawings"]}, indent=2)
+            col_l, col_c, col_r = st.columns([1, 2, 1])
+            with col_c:
+                st.download_button(
+                    label="⬇ Export GeoJSON",
+                    data=geojson_str,
+                    file_name="subway_proposal.geojson",
+                    mime="application/json",
+                    use_container_width=True,
+                )
+        else:
+            st.caption("Draw a route and place station markers on the map — the Export button will appear here.")
 
 
 # ── Tab 5: Simulation Comparison ───────────────────────────────────────────
@@ -1570,7 +1684,6 @@ with tab5:
         )
 
     if geojson_file is None:
-        # FIX 4: <em> italic instead of <code> black/green
         st.markdown("""
         <div class="note">
         No GeoJSON uploaded yet. Go to the <b>Extension Simulator</b> tab, draw your proposed extension,
@@ -1610,13 +1723,13 @@ with tab5:
                     unsafe_allow_html=True,
                 )
 
-                with st.expander("Need Score configuration", expanded=False):
+                with st.expander("Need Score Configuration", expanded=False):
                     sim_factor_weights = {}
                     for label in NEED_FACTOR_OPTIONS:
                         base_val = st.session_state.get(f"w_base_{label}", 1.0 if label in NEED_FACTOR_DEFAULTS else 0.0)
                         w = st.slider(
                             label, min_value=0.0, max_value=2.0, value=float(base_val), step=0.25,
-                            key=f"w_sim_{label}",
+                            key=f"w_sim_{label}", format="%.2f",
                         )
                         sim_factor_weights[label] = w
                 if not any(f"w_sim_{l}" in st.session_state for l in NEED_FACTOR_OPTIONS):
@@ -1667,6 +1780,7 @@ with tab5:
                             geometry=[], crs="EPSG:32617",
                         )
 
+                    # Line 3 hardcoded coords (closed 2023, not in GTFS)
                     line3_df = pd.DataFrame([
                         {"stop_lat": 43.73205, "stop_lon": -79.26473},
                         {"stop_lat": 43.75090, "stop_lon": -79.27044},
@@ -1751,6 +1865,7 @@ with tab5:
                     transit_df_sim = pd.DataFrame(sim_scores)
                     mn = transit_df_base["transit_access"].min()
                     mx = transit_df_base["transit_access"].max()
+                    # Normalise on baseline scale for direct comparability
                     transit_df_sim["transit_access_sim_norm"] = (
                         (transit_df_sim["transit_access_sim"] - mn) / (mx - mn) * 100
                     ).clip(0, 100).round(1)
@@ -1823,29 +1938,59 @@ with tab5:
                         new_layer.add_to(fm)
                     folium.map.Marker(
                         [43.845, -79.53],
-                        icon=folium.DivIcon(html=f'<div style="font-family:Arial;font-size:13px;font-weight:600;color:#1d1d1f;background:rgba(255,255,255,0.92);padding:4px 10px;border-radius:6px;border:1px solid #e0e0e5;white-space:nowrap">{title}</div>'),
+                        icon=folium.DivIcon(html=f'<div style="font-family:Helvetica Neue,Arial,sans-serif;font-size:13px;font-weight:600;color:#1d1d1f;background:rgba(255,255,255,0.92);padding:4px 10px;border-radius:6px;border:1px solid #e0e0e5;white-space:nowrap">{title}</div>'),
                     ).add_to(fm)
                     return fm
 
                 base_choro_df = comparison.reset_index()[["Neighbourhood", "equity_gap"]].rename(columns={"equity_gap": "Value"})
                 sim_choro_df  = comparison.reset_index()[["Neighbourhood", "equity_gap_sim"]].rename(columns={"equity_gap_sim": "Value"})
                 new_stn_wgs84 = new_stations_gdf.to_crs("EPSG:4326")
-
+                
                 with mc1:
                     st.markdown("**Baseline**")
-                    fm_base = build_comparison_map("Baseline", base_choro_df, "RdYlGn_r", "Equity Gap — Baseline")
-                    st_folium(fm_base, width="100%", height=420, returned_objects=[], key="cmp_map_base")
+                    fm_base = build_comparison_map(
+                        "Baseline",
+                        base_choro_df,
+                        "RdYlGn_r",
+                        "Equity Gap — Baseline"
+                    )
+
+                    st_folium(
+                        fm_base,
+                        width="100%",
+                        height=420,
+                        returned_objects=[],
+                        key="cmp_map_base"
+                    )
 
                 with mc2:
                     st.markdown("**Your Simulation**")
-                    fm_sim = build_comparison_map("Simulated", sim_choro_df, "RdYlGn_r", "Equity Gap — Simulated", new_stn_wgs84)
-                    st_folium(fm_sim, width="100%", height=420, returned_objects=[], key="cmp_map_sim")
 
-                st.markdown(
-                    '<p style="font-size:12px;color:#6e6e73;margin-top:4px">'
-                    '<span style="color:#E63946">●</span> Red circles = new simulated stations. </p>',
-                    unsafe_allow_html=True,
-                )
+                    fm_sim = build_comparison_map(
+                        "Simulated",
+                        sim_choro_df,
+                        "RdYlGn_r",
+                        "Equity Gap — Simulated",
+                        new_stn_wgs84
+                    )
+
+                    st_folium(
+                        fm_sim,
+                        width="100%",
+                        height=420,
+                        returned_objects=[],
+                        key="cmp_map_sim"
+                    )
+
+                    st.markdown(
+                        """
+                        <p style="font-size:12px;color:#6e6e73;margin-top:4px">
+                        <span style="color:#E63946">●</span>
+                        Red circles = new simulated stations.
+                        </p>
+                        """,
+                        unsafe_allow_html=True,
+                    )
 
                 st.markdown("---")
                 st.markdown("#### Top 15 Most Underserved — Baseline vs Simulation")
@@ -1891,7 +2036,7 @@ with tab5:
                     "config": {
                         "background": "#ffffff",
                         "view": {"stroke": "transparent", "fill": "#ffffff"},
-                        "axis": {"labelFont": "-apple-system, sans-serif", "titleFont": "-apple-system, sans-serif"},
+                        "axis": {"labelFont": "Helvetica Neue, sans-serif", "titleFont": "Helvetica Neue, sans-serif"},
                     },
                     "height": 240,
                 }
@@ -1969,5 +2114,10 @@ with tab6:
         "**Limitations**: \n\nLine 3 (Scarborough RT, closed 2023) uses hardcoded coordinates. "
         "Six neighbourhoods with name mismatches between the census and GeoJSON may appear unshaded."
     )
-
-    st.markdown("Developed by Anitra Roy, Maggie Wu, Sameha Tasnim")
+    
+    st.markdown("""
+        <div style="display:flex; justify-content:space-between; font-size:14px;">
+            <span>Developed by Anitra Roy, Maggie Wu, Sameha Tasnim</span>
+            <span>Last Updated: May 2026</span>
+        </div>
+        """, unsafe_allow_html=True)
