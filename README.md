@@ -1,55 +1,158 @@
-# TTC Transit Equity Explorer
+# Transit Equity Scenario Analyzer (TESA)
 
 An interactive Streamlit dashboard that layers TTC transit infrastructure over Toronto neighbourhood census data. Built for the Transit Data Challenge 2026.
 
-The goal is to make it easy to see which communities are most transit-dependent, where service gaps exist, and where a new station would do the most good.
+The goal is to make it easy to see which communities are most transit-dependent, where service gaps exist, and where a new station would do the most good — and to let anyone sketch a proposed extension and immediately see its equity impact.
+
+**Hosted URL:** [https://transitequityscenarioanalyzer.streamlit.app/](https://transitequityscenarioanalyzer.streamlit.app/)
 
 ---
 
-## Quick start
+## Running Locally
+
+### Prerequisites
+
+You'll need **Python 3.10 or newer**. If you're not sure which version you have, open a terminal and run:
+
+```bash
+python --version
+```
+
+If you don't have Python, download it from [python.org](https://www.python.org/downloads/) — make sure to check "Add Python to PATH" during installation on Windows.
+
+### Step 1 — Get the code
+
+If you have Git installed:
+
+```bash
+git clone <repo-url>
+cd tesa
+```
+
+Or download and unzip the repository from GitHub, then open a terminal in the unzipped folder.
+
+### Step 2 — Create a virtual environment (recommended)
+
+A virtual environment keeps the project's dependencies isolated from the rest of your system.
+
+**Mac / Linux:**
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+**Windows (Command Prompt):**
+```bat
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Windows (PowerShell):**
+```powershell
+python -m venv venv
+venv\Scripts\Activate.ps1
+```
+
+You'll see `(venv)` at the start of your terminal prompt when the environment is active. Run the activate command again any time you open a new terminal.
+
+### Step 3 — Install dependencies
 
 ```bash
 pip install -r requirements.txt
+```
+
+This installs Streamlit, GeoPandas, Folium, and the other libraries the app needs. It may take a minute or two on first run.
+
+> **Windows note:** GeoPandas can be tricky to install on Windows. If `pip install -r requirements.txt` fails, try installing via conda instead:
+> ```
+> conda install geopandas folium -c conda-forge
+> pip install streamlit streamlit-folium openpyxl
+> ```
+
+### Step 4 — Add the data files
+
+The app expects a `data/` folder in the same directory as `app.py`. By default, a zip file is added to this repo so you can see 2021 data. When zipped, the folder contains:
+
+| File | Where to get it |
+|---|---|
+| `data/census_data.xlsx` | Statistics Canada 2021 census metrics by Toronto neighbourhood |
+| `data/Neighbourhoods.geojson` | City of Toronto Open Data portal — search "Neighbourhoods" |
+| `data/routes.txt`<br>`data/trips.txt`<br>`data/stops.txt`<br>`data/shapes.txt`<br>`data/stop_times.txt` | TTC GTFS feed — download from the TTC open data page and extract the zip directly into `data/` |
+| `data/ttc-subway-shapefile-wgs84.zip` | TTC subway shapefile — optional; only needed if you want to replace the built-in Line 3 geometry |
+
+If a file is missing, a red dot appears next to it in the sidebar. You can also upload replacement files directly through the sidebar UI without restarting the app.
+
+### Step 5 — Run the app
+
+```bash
 streamlit run app.py
 ```
 
-The app expects its data files under a `data/` subdirectory (see below). If a file is missing, a red dot appears in the sidebar — you can also upload replacements directly through the UI without restarting.
-
----
-
-## Data files
-
-| File | What it is |
-|---|---|
-| `data/census_data.xlsx` | Statistics Canada 2021 census metrics by Toronto neighbourhood |
-| `data/Neighbourhoods.geojson` | City of Toronto neighbourhood boundary polygons |
-| `data/routes.txt`, `trips.txt`, `stops.txt`, `shapes.txt`, `stop_times.txt` | TTC GTFS feed (drop the extracted files directly into `data/`) |
-| `data/ttc-subway-shapefile-wgs84.zip` | TTC subway shapefile — only needed if you want to replace the hardcoded Line 3 geometry |
-
-All sources are open/public data with no PII. See the About tab for licences.
-
-> **Note on Line 3:** The Scarborough RT was closed in 2023 and is no longer in TTC's GTFS feed. The app uses hardcoded coordinates for its alignment and stations, so you won't need a shapefile for it.
+The app will open automatically in your browser at `http://localhost:8501`. The first load takes a few extra seconds while it parses the GTFS feed — subsequent loads are cached.
 
 ---
 
 ## What's in each tab
 
 ### Census Map
-Choropleth of any of 12 census metrics — transit use, income, low-income rate, shelter cost burden, renters, seniors, recent immigrants, visible minority share, and departure time bands. Subway lines render in official TTC colours; bus and streetcar overlays are toggleable from the sidebar. Hover any neighbourhood for its value and underlying count.
+Choropleth of any of 12 census metrics — transit use, commute duration, departure time bands, income, low-income rate, shelter cost burden, renters, seniors, recent immigrants, and visible minority share. Subway lines render in official TTC colours (yellow / green / blue / purple); bus and streetcar overlays are toggleable from the sidebar. Hover any neighbourhood for its value and underlying count.
 
-### Equity Analysis
+### Census Analysis
 Ranked top/bottom-10 tables for each equity-relevant metric, a distribution bar chart across all 158 neighbourhoods, and a per-neighbourhood profile lookup that shows every indicator at once. Useful for spotting where multiple disadvantages overlap.
 
+### Equity Gap
+Brings together two computed scores to surface underserved communities:
+
+1. **Transit Access Score** — counts stops and stations of each mode within walking distance of each neighbourhood, applies mode weights (local bus ×1.0, express ×1.5, streetcar ×1.5, subway ×3.0), divides by neighbourhood area (km²), and normalizes to 0–100.
+2. **Need Score** — a weighted composite of census vulnerability indicators (low income, seniors, renters, shelter burden, visible minority share, etc.), each normalized 0–100 and combined into a single score. Weights are adjustable via sliders.
+3. **Equity Gap** = Need Score − Transit Access Score. A positive gap means a neighbourhood has greater need than its current level of service.
+
+The tab shows an interactive choropleth, a top-15 most-underserved table, and bar charts for each component.
+
 ### Extension Simulator
-A freehand drawing tool on top of the census choropleth. Draw a proposed route with the polyline tool, drop station markers, sketch 500 m catchment circles, measure distances, and export the whole thing as GeoJSON. Nothing persists between sessions, so export before you close.
+A freehand drawing tool layered over the census choropleth. Use the toolbar to:
+
+- **Polyline tool** — draw a proposed route alignment
+- **Marker tool** — place a marker at each proposed station
+- **Circle tool** — sketch ~500 m walking catchment zones around stations
+- **Measure tool** — estimate route distances
+
+When you're done, click **Export GeoJSON** to download your proposal as `subway_proposal.geojson`. Drawings are not saved between sessions, so export before you close the tab.
+
+### Simulation Comparison
+Upload the GeoJSON exported from the Extension Simulator. The app adds your proposed stations to the existing network, re-computes the Transit Access Score, recalculates the Equity Gap, and compares results side-by-side against the baseline. You'll see:
+
+- Impact summary cards (stations added, neighbourhoods affected, average change in access and equity gap)
+- Side-by-side baseline vs. simulated choropleth maps
+- A delta bar chart showing which neighbourhoods improved most
+- A full comparison table for all 158 neighbourhoods
 
 ### About
-Data source table, privacy compliance note, full metric definitions, and methodology notes (how percentages are calculated, why some neighbourhoods appear unshaded, how GTFS geometry is selected).
+Data source table, privacy compliance note, full metric definitions, and methodology notes.
 
 ---
 
-## Notes
+## Data sources
 
-- `stop_times.txt` is very large. The app reads it in 200k-row chunks and filters to subway trips only, so initial load takes a few seconds but subsequent loads are cached.
-- Neighbourhood name matching between the census and GeoJSON is done by string equality. About six neighbourhoods have minor naming mismatches and will appear unshaded on the choropleth.
-- Percentage values shown in the app represent each neighbourhood's share of the city-wide total for that metric, not the neighbourhood-internal rate. A value of 2.4% for "Public Transit %" means that neighbourhood accounts for 2.4% of all transit commuters in Toronto.
+| Dataset | Source | Licence |
+|---|---|---|
+| Census data | Statistics Canada, 2021 | Open Government Licence |
+| Neighbourhood boundaries | City of Toronto Open Data | Open Government Licence |
+| GTFS feed | Toronto Transit Commission | Open Data |
+| Subway shapefile | TTC / OpenStreetMap | Open Data |
+
+All datasets are open/public with no personally identifiable information. No individual travel records, smartcard data, or device identifiers are used. This project complies with the Transit Data Challenge Privacy-First Principle.
+
+---
+
+## Technical notes
+
+- `stop_times.txt` can be very large (several hundred MB). The app reads it in 200k-row chunks and filters to relevant trips only, so the initial load takes a few seconds but subsequent loads are cached for the session.
+- Neighbourhood name matching between the census and GeoJSON is done by string equality after a small set of known corrections. About six neighbourhoods have residual naming mismatches and will appear unshaded on the choropleth.
+- Percentage values in the app represent each neighbourhood's share of the city-wide total for that metric, not the neighbourhood-internal rate. A value of 2.4% for "Public Transit %" means that neighbourhood accounts for 2.4% of all transit commuters in Toronto — not that 2.4% of that neighbourhood's residents take transit.
+- Line 3 (Scarborough RT, closed 2023) is no longer in TTC's GTFS feed. The app uses hardcoded coordinates for its six stations and alignment.
+- Simulation scores are normalized on the same baseline scale as the original Transit Access Score, so baseline and simulated values are directly comparable.
+
+---
+
+Developed by Anitra Roy, Maggie Wu, Sameha Tasnim · Last updated May 2026

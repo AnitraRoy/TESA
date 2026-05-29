@@ -118,9 +118,17 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 1rem !importan
 
 .sidebar-section {
     font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.06em; color: #6e6e73 !important; margin: 20px 0 10px;
+    letter-spacing: 0.06em; color: #6e6e73 !important; margin: 5px 0 2.5px;
 }
 
+[data-testid="stSidebarCollapsedControl"] {
+    display: block !important;
+    visibility: visible !important;
+    position: fixed !important;
+    top: 0.5rem !important;
+    left: 0.5rem !important;
+    z-index: 99999 !important;
+}
 [data-testid="stSidebarCollapsedControl"] button {
     background: #ffffff !important;
     border: 1px solid #e0e0e5 !important;
@@ -136,7 +144,7 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 1rem !importan
 
 .file-row {
     display: flex; align-items: center; gap: 8px;
-    padding: 6px 0; font-size: 13px;
+    padding: 4px 0; font-size: 13px;
     border-bottom: 1px solid #f0f0f5; color: #1d1d1f;
 }
 .file-row .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
@@ -746,7 +754,9 @@ def compute_transit_access(_routes_hash, _trips_hash, _stops_hash, _shapes_hash,
     WEIGHT = {"local": 1.0, "express": 1.5,  "streetcar": 1.5,  "subway": 3.0}
 
     def count_within(geom, pts_gdf, buf_m):
-        return int(pts_gdf.geometry.within(geom.buffer(buf_m)).sum())
+        buffered = geom.buffer(buf_m)
+        candidates = pts_gdf.iloc[list(pts_gdf.sindex.intersection(buffered.bounds))]
+        return int(candidates.geometry.within(buffered).sum())
 
     scores = []
     for _, row in gdf_utm.iterrows():
@@ -1677,7 +1687,7 @@ with tab5:
     upload_col, _ = st.columns([1, 2])
     with upload_col:
         geojson_file = st.file_uploader(
-            "Upload your geojson file",
+            "Upload your .geojson file",
             type=["geojson", "json"],
             key="sim_geojson_upload",
             help="Export your drawing from the Extension Simulator tab, then upload it here.",
@@ -1842,7 +1852,9 @@ with tab5:
                     WEIGHT = {"local": 1.0, "express": 1.5,  "streetcar": 1.5,  "subway": 3.0}
 
                     def count_within2(geom, pts_gdf, buf_m):
-                        return int(pts_gdf.geometry.within(geom.buffer(buf_m)).sum())
+                        buffered = geom.buffer(buf_m)
+                        candidates = pts_gdf.iloc[list(pts_gdf.sindex.intersection(buffered.bounds))]
+                        return int(candidates.geometry.within(buffered).sum())
 
                     sim_scores = []
                     for _, row in gdf_utm2.iterrows():
@@ -1926,6 +1938,16 @@ with tab5:
                     ).add_to(fm)
                     if show_subway:
                         add_subway_to_map(fm, route_polylines, stations)
+                    if show_bus and bus_lines:
+                        bl = folium.FeatureGroup(name="Bus Routes", show=True)
+                        for rid, info in bus_lines.items():
+                            folium.PolyLine(info["coords"], color="#E8871E", weight=1.5, opacity=0.45, tooltip=f"Bus {info['label']}").add_to(bl)
+                        bl.add_to(fm)
+                    if show_streetcar and streetcar_lines:
+                        sl = folium.FeatureGroup(name="Streetcar Routes", show=True)
+                        for rid, info in streetcar_lines.items():
+                            folium.PolyLine(info["coords"], color="#C8102E", weight=2, opacity=0.6, tooltip=f"Streetcar {info['label']}").add_to(sl)
+                        sl.add_to(fm)
                     if new_stations_gdf_wgs is not None:
                         new_layer = folium.FeatureGroup(name="New Stations", show=True)
                         for _, s in new_stations_gdf_wgs.iterrows():
