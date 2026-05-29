@@ -582,9 +582,8 @@ def load_gtfs(gtfs_dir):
     shapes_raw["shape_pt_lon"]      = shapes_raw["shape_pt_lon"].astype(float)
     shapes_raw["shape_pt_sequence"] = shapes_raw["shape_pt_sequence"].astype(int)
 
-    SUBWAY_IDS   = [1, 2, 4]
+    SUBWAY_IDS = [1, 2, 4]
     subway_trips = trips[trips["route_id"].isin(SUBWAY_IDS)].copy()
-    subway_trips["trip_id"] = subway_trips["trip_id"].astype(str)
 
     def longest_shape(route_id):
         ids = subway_trips[subway_trips["route_id"] == route_id]["shape_id"].dropna().unique()
@@ -600,42 +599,15 @@ def load_gtfs(gtfs_dir):
         pts = shapes_raw[shapes_raw["shape_id"] == sid].sort_values("shape_pt_sequence")
         route_polylines[rid] = list(zip(pts["shape_pt_lat"], pts["shape_pt_lon"]))
 
-    subway_trip_ids = set(subway_trips["trip_id"])
+    precomputed = os.path.join(gtfs_dir, "stations_precomputed.csv")
+    if os.path.exists(precomputed):
+        stations = pd.read_csv(precomputed)
+    else:
+        st.warning("stations_precomputed.csv not found — run preprocess_gtfs.py locally and commit the file.", icon="⚠️")
+        stations = pd.DataFrame(columns=["route_id","station_name","stop_lat","stop_lon"])
 
-    def clean_name(raw):
-        n = re.sub(r"\s*-\s*(Northbound|Southbound|Eastbound|Westbound).*", "", raw)
-        n = re.sub(r"\s*Platform.*",  "", n)
-        n = re.sub(r"\s*-\s*Subway.*", "", n)
-        return n.strip()
-
-    stops["stop_id"] = stops["stop_id"].astype(str)
-    chunks = []
-    for chunk in pd.read_csv(
-        os.path.join(gtfs_dir, "stop_times.txt"),
-        usecols=["trip_id", "stop_id"],
-        chunksize=200_000,
-        dtype=str,
-    ):
-        filtered = chunk[chunk["trip_id"].isin(subway_trip_ids)]
-        if len(filtered):
-            chunks.append(filtered)
-
-    stations = pd.DataFrame(columns=["route_id", "station_name", "stop_lat", "stop_lon"])
-    if chunks:
-        sst = pd.concat(chunks, ignore_index=True).drop_duplicates()
-        sst = (
-            sst
-            .merge(subway_trips[["trip_id", "route_id"]], on="trip_id", how="left")
-            [["route_id", "stop_id"]].drop_duplicates()
-            .merge(stops[["stop_id", "stop_name", "stop_lat", "stop_lon"]], on="stop_id", how="left")
-        )
-        sst["station_name"] = sst["stop_name"].apply(clean_name)
-        sst["stop_lat"]     = pd.to_numeric(sst["stop_lat"], errors="coerce")
-        sst["stop_lon"]     = pd.to_numeric(sst["stop_lon"], errors="coerce")
-        stations = sst.drop_duplicates(subset=["route_id", "station_name"]).reset_index(drop=True)
-
-    bus_routes       = routes[routes["route_type"] == 3][["route_id", "route_short_name", "route_long_name"]].copy()
-    streetcar_routes = routes[routes["route_type"] == 0][["route_id", "route_short_name", "route_long_name"]].copy()
+    bus_routes       = routes[routes["route_type"] == 3][["route_id","route_short_name","route_long_name"]].copy()
+    streetcar_routes = routes[routes["route_type"] == 0][["route_id","route_short_name","route_long_name"]].copy()
 
     def get_polylines(route_subset):
         result = {}
@@ -648,10 +620,7 @@ def load_gtfs(gtfs_dir):
             pts    = shapes_raw[shapes_raw["shape_id"] == best].sort_values("shape_pt_sequence")
             coords = list(zip(pts["shape_pt_lat"], pts["shape_pt_lon"]))
             if len(coords) >= 2:
-                result[rid] = {
-                    "coords": coords,
-                    "label":  f"{row['route_short_name']} · {row['route_long_name']}",
-                }
+                result[rid] = {"coords": coords, "label": f"{row['route_short_name']} · {row['route_long_name']}"}
         return result
 
     bus_lines       = get_polylines(bus_routes)
