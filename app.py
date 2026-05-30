@@ -719,7 +719,7 @@ def compute_transit_access(_routes_hash, _trips_hash, _stops_hash, _shapes_hash,
     gdf_utm = gpd.read_file(geojson_path).to_crs("EPSG:32617")
     gdf_utm["area_km2"] = gdf_utm.geometry.area / 1e6
 
-    BUFFER = {"local": 400, "express": 1200, "streetcar": 400, "subway": 800}
+    BUFFER = {"local": 400, "express": 1200, "streetcar": 400, "subway": 400}
     WEIGHT = {"local": 1.0, "express": 1.5,  "streetcar": 1.5,  "subway": 3.0}
 
     def count_within(geom, pts_gdf, buf_m):
@@ -2093,7 +2093,7 @@ with tab6:
     st.markdown("#### Methodological Notes")
     st.markdown(
         "**Transit Access Score (Step 1):** Each neighbourhood is scored by counting stops/stations of each mode "
-        "(local bus, express bus, streetcar, subway) within mode-specific buffers (400 m, 1200 m, 400 m, 800 m respectively), "
+        "(local bus, express bus, streetcar, subway) within mode-specific buffers (400 m, 1200 m, 400 m, 400 m respectively), "
         "applying mode weights (1.0, 1.5, 1.5, 3.0), and dividing by neighbourhood area (km²). "
         "Scores are normalized 0-100 across all neighbourhoods.\n\n"
         "**Need Score (Step 2):** Each selected factor is normalized 0-100, then multiplied by its user-supplied weight. "
