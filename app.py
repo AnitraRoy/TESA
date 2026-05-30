@@ -1505,11 +1505,6 @@ with tab3:
 
         st.markdown("---")
         st.markdown("#### Top 15 Most Underserved Neighbourhoods")
-        st.markdown(
-            '<p style="font-size:13px;color:#6e6e73;margin-bottom:16px">'
-            "Ranked by Equity Gap — a larger gap indicates greater unmet need relative to current service levels.</p>",
-            unsafe_allow_html=True,
-        )
 
         top15 = equity.sort_values("equity_gap", ascending=False).head(15).reset_index()
         top15.columns = ["Neighbourhood", "Transit Access Score", "Need Score", "Equity Gap"]
@@ -1532,6 +1527,12 @@ with tab3:
             st.vega_lite_chart(chart_gap, vega_bar_chart(chart_gap, "Neighbourhood", "Equity Gap", "#C8102E", "Equity Gap"), use_container_width=True)
 
         st.markdown("**Top 15 Neighbourhoods by Equity Gap**")
+        st.markdown(
+            '<p style="font-size:13px;color:#6e6e73;margin-bottom:16px">'
+            "Ranked by Equity Gap — a larger gap indicates greater unmet need relative to current service levels.</p>",
+            unsafe_allow_html=True,
+        )
+        
         styled_df(top15.set_index("Neighbourhood"))
 
         st.session_state["baseline_equity"]    = equity

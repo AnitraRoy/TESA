@@ -1,0 +1,75 @@
+route_id,station_name,stop_lat,stop_lon
+1,Finch Station,43.780147,-79.415692
+1,North York Centre Station,43.767347,-79.412492
+1,Sheppard-Yonge Station,43.760348,-79.410691
+1,York Mills Station,43.743248,-79.405991
+1,Lawrence Station,43.725348,-79.40229
+1,Eglinton Station,43.704648,-79.39889
+1,Davisville Station,43.697048,-79.39689
+1,St Clair Station,43.687449,-79.393089
+1,Summerhill Station,43.682049,-79.390789
+1,Rosedale Station,43.676049,-79.388089
+1,Bloor Station,43.670049,-79.385389
+1,Wellesley Station,43.664949,-79.383488
+1,College Station,43.660149,-79.382688
+1,TMU Station,43.655949,-79.380788
+1,Queen Station,43.652149,-79.379188
+1,King Station,43.648449,-79.377688
+1,Union Station,43.645549,-79.381488
+1,St Andrew Station,43.648249,-79.385088
+1,Osgoode Station,43.651749,-79.386888
+1,St Patrick Station,43.655249,-79.388388
+1,Queen's Park Station,43.660549,-79.390689
+1,Museum Station,43.667249,-79.393389
+1,St George Station,43.668249,-79.399689
+1,Spadina Station,43.670249,-79.405189
+1,Dupont Station,43.674949,-79.40709
+1,St Clair West Station,43.685148,-79.41589
+1,Cedarvale Station,43.700648,-79.436691
+1,Glencairn Station,43.709148,-79.440892
+1,Lawrence West Station,43.715784,-79.444038
+1,Yorkdale Station,43.725248,-79.447692
+1,Wilson Station,43.735048,-79.450192
+1,Sheppard West Station,43.750204,-79.462781
+1,Downsview Park Station,43.753311,-79.478693
+1,Finch West Station,43.764855,-79.491118
+1,York University,43.774097,-79.499888
+1,Pioneer Village Station,43.776741,-79.509334
+1,Highway 407 Station,43.783359,-79.523454
+1,Vaughan Metropolitan Centre Station,43.794021,-79.527906
+2,Greenwood Station,43.682549,-79.331687
+2,Coxwell Station,43.684549,-79.321986
+2,Woodbine Station,43.686649,-79.312286
+2,Main Street Station,43.689249,-79.300686
+2,Victoria Park Station,43.695149,-79.287885
+2,Warden Station,43.712149,-79.278785
+2,Kennedy Station,43.732487,-79.263718
+2,Kipling Station,43.637648,-79.535694
+2,Islington Station,43.645548,-79.523293
+2,Royal York Station,43.648548,-79.508693
+2,Old Mill Station,43.649448,-79.493392
+2,Jane Station,43.650149,-79.482892
+2,Runnymede Station,43.652049,-79.474992
+2,High Park Station,43.653849,-79.466991
+2,Keele Station,43.655649,-79.458691
+2,Dundas West Station,43.657449,-79.451091
+2,Lansdowne Station,43.659246,-79.442463
+2,Dufferin Station,43.660849,-79.43389
+2,Ossington Station,43.662349,-79.42609
+2,Christie Station,43.664449,-79.41729
+2,Bathurst Station,43.665949,-79.410589
+2,Spadina Station,43.667249,-79.403889
+2,St George Station,43.668549,-79.397989
+2,Bay Station,43.670149,-79.390089
+2,Yonge Station,43.670997,-79.385956
+2,Sherbourne Station,43.672103,-79.376162
+2,Castle Frank Station,43.674049,-79.368088
+2,Broadview Station,43.677049,-79.358088
+2,Chester Station,43.678241,-79.352502
+2,Pape Station,43.679949,-79.344087
+2,Donlands Station,43.681149,-79.337487
+4,Sheppard-Yonge Station,43.761494,-79.410394
+4,Bayview Station,43.766872,-79.386703
+4,Bessarion Station,43.769201,-79.376311
+4,Leslie Station,43.771348,-79.36499
+4,Don Mills Station,43.775547,-79.346584
